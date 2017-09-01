@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+ <title>login page</title>  
+<title>Form表单提交</title>
+<script type="text/javascript">
+
+function display(obj){
+
+    var currentVal=$(obj.id).value;
+    if(currentVal=="")
+        {
+        $(obj.id).value=obj.defaultValue;
+        }
+    else{
+        $(obj.id).value=currentVal;
+        if(currentVal.length<6)
+        {
+            $("info1").innerText="用户名称太短,应为6-10个字符";
+        }
+        else if(currentVal.length>10)
+        {
+            $("info1").innerText="用户名称太长，应为6-10个字符";
+        }
+        else {
+            var myreg=/[a_zA_z0-9_-]+/gi;
+            if(!myreg.test(currentVal))
+            {
+                $("info1").innerText="用户名不能为除下划线之外的特殊字符";
+            }
+            else {
+            	  $("b3").disabled=false;
+                }
+             }
+        }
+
+}
+function dispass(obj){
+
+var currentVal=$(obj.id).value;
+    if(currentVal=="")
+        {
+        $(obj.id).value=obj.defaultValue;
+        }
+    else{
+        $(obj.id).value=currentVal;
+        if(currentVal.length<6)
+        {
+            $("info2").innerText="密码太短";
+        }
+        else if(currentVal.length>16)
+        {
+            $("info2").innerText="密码太长";
+        }
+        else {
+            var myreg=/[a_zA_z]+[0-9]+/gi;
+            if(!myreg.test(currentVal))
+            {
+                $("info2").innerText="密码应该为字母和数字的组合";
+            }
+            else {
+            	  $("b3").disabled=false;
+            }
+        }
+    }
+  
+}
+b3.on("click",function(){
+    var form = new FormData();
+    form.append("username",$("b1").value);
+   	form.append("password",$("b2").value);
+    $.ajax({
+        url:"${base}/login",
+        type:"post",
+        data:form,
+        processData:false,
+        contentType:false,
+        success:function(response){
+            if(response.state==0){
+            	alert(response.message);
+            	
+            }else{
+            	$("info1").innerText=response.data["err1"];
+            	$("info2").innerText=response.data["err2"];
+            }
+        }
+    });
+});
+
+
+
+function doclear(obj)
+{
+
+    var currentVal=$(obj.id).value;
+    if(currentVal==obj.defaultValue)
+        {
+        $(obj.id).value="";
+        }
+    else{
+        $(obj.id).value=currentVal;
+    }
+}
+
+function $(id)
+{
+    return document.getElementById(id);
+}
+function setStyle(x)
+{
+document.getElementById(x).style.background="yellow"
+}
+</script>
+</head>
+<body>
+<form action="" id="loginForm">
+
+
+        <!--value 就是默认值 可以通过 this.defaultValue来访问-->
+         <input type="text" value="用户邮箱/手机号/用户名"  onfocus="doclear(this)" onblur="display(this)" id="b1"/><span id="info1"></span><br>
+         <input type="password" value="请输入密码" onfocus="doclear(this)" onblur="dispass(this)" id="b2"/><span id="info2"></span><br>
+         <input type="submit" value="登陆" disabled="disabled" id="b3"/><br>
+
+
+
+</form>
+</body>
+</html>
